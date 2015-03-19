@@ -1,5 +1,6 @@
 server {
     listen 80;
+    listen 9022 default_server;
     server_name ${TORRENT_DOMAIN};
 
     keepalive_timeout   70; 
@@ -16,7 +17,7 @@ server {
     # no security problem here, since / is always passed to upstream
 
     location / {
-        return 301 http://$server_name/gui;
+        return 301 http://$host:$server_port/gui;
     }
 
 

@@ -11,6 +11,8 @@ web:
   ports:
     - "80:80"
     - "443:443"
+    - "9021:9021"
+    - "9022:9022"
   volumes:
     - ./nginx/sites:/etc/nginx/sites-templates:ro
     - ./nginx/certs:/etc/nginx/certs:ro
