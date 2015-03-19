@@ -1,0 +1,51 @@
+server {
+    listen 80;
+    server_name ${PLEX_DOMAIN};
+
+    location / {
+        return 301 https://$server_name$uri;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name ${PLEX_DOMAIN};
+
+    ## SSL
+    ssl_certificate /etc/nginx/certs/plex.crt;
+    ssl_certificate_key /etc/nginx/certs/plex.key;
+
+    ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+    ssl_prefer_server_ciphers on; 
+    ssl_ciphers 'kEECDH+ECDSA+AES128 kEECDH+ECDSA+AES256 kEECDH+AES128 kEECDH+AES256 kEDH+AES128 kEDH+AES256 DES-CBC3-SHA +SHA !aNULL !eNULL !LOW !MD5 !EXP !DSS !PSK !SRP !kECDH !CAMELLIA !RC4 !SEED'; 
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+    keepalive_timeout   70; 
+    add_header Strict-Transport-Security 'max-age=31536000; preload';
+    add_header X-Frame-Options sameorigin;
+    add_header X-XSS-Protection '1; mode=block';
+    add_header X-Content-Type-Options nosniff;
+
+
+    ## Compression
+    gzip              on; 
+    gzip_buffers      16 8k; 
+    gzip_comp_level   4;  
+    gzip_http_version 1.0;
+    gzip_min_length   1280;
+    gzip_types        text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript image/x-icon image/bmp;
+    gzip_vary         on; 
+
+    # no security problem here, since / is always passed to upstream
+
+    location / {
+        auth_basic "Restricted";
+        auth_basic_user_file /etc/nginx/pass.d/plex_htpasswd;
+        proxy_pass_header Server;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Scheme $scheme;
+        proxy_pass http://${PLEX_PORT_50000_TCP_ADDR}:${PLEX_PORT_50000_TCP_PORT}/;
+        proxy_read_timeout 2m;
+    }
+}

@@ -1,0 +1,42 @@
+---
+web:
+  image: umurkontaci/nginx
+  environment:
+    TORRENT_DOMAIN: torrent.docker
+    PLEX_DOMAIN: plex.docker
+  restart: always
+  links:
+    - torrent
+    - plex
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ./nginx/sites:/etc/nginx/sites-templates:ro
+    - ./nginx/certs:/etc/nginx/certs:ro
+    - ./nginx/pass:/etc/nginx/pass.d:ro
+torrent:
+  image: umurkontaci/utorrent
+  expose:
+    - "3000"
+    - "8080"
+  ports:
+    - "6881:6881"
+  restart: always
+  links: 
+    - plex
+  volumes:
+    - "/datadrive/plex:/root/Library"
+    - "/datadrive/media:/plex"
+plex:
+  image: umurkontaci/plex-server
+  expose:
+    - "50000"
+  ports:
+    - "32400:32400"
+    - "1900:1900"
+    - "32469:32469"
+  restart: always
+  volumes:
+    - "/datadrive/plex:/root/Library"
+    - "/datadrive/media:/plex"
