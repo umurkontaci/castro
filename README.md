@@ -26,7 +26,7 @@ on really wide series of devices, uTorrent is responsible for getting the conten
 
 1. Head over to `http://SERVER_IP:9021/web`
 2. Accept ToS, give your server a name and play around
-3. Add two libraries from the + icon above your server on the left hand side of the page. (Movies and TV Shows). 
+3. Add two libraries from the + icon above your server on the left-hand side of the page. (Movies and TV Shows). 
 uTorrent puts all downloads to `/plex/` folder, so choose that folder for both.
 4. Create a plex account, connect your account with the server (from server settings).
 5. Check port forwarding, the default port is 32400. If Plex can't connect, set that port manually (even if it says it's set to 32400 by default)
